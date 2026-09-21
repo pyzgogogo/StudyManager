@@ -3,6 +3,7 @@
 #include <fstream>
 #include <filesystem>
 #include <system_error>
+#include <limits>
 
 using namespace std;
 
@@ -348,7 +349,7 @@ bool loadFromFile()
 }
 
 // 释放链表函数
-void claerTasks()
+void clearTasks()
 {
     while (head != nullptr)
     {
@@ -362,7 +363,7 @@ int main()
 {
     if (!loadFromFile())
     {
-        claerTasks();
+        clearTasks();
         return 1;
     }
 
@@ -378,7 +379,29 @@ int main()
         cout << "0.退出" << endl;
 
         cout << "请选择：" << endl;
-        cin >> choice;
+        if (!cin >> choice)
+        {
+            if (cin.eof())
+            {
+                cout << "输入正常，程序正在保存并退出！" << endl;
+            }
+
+            if (!saveToFile())
+            {
+                cout << "任务保存失败！" << endl;
+                clearTasks();
+                return 1;
+            }
+
+            clearTasks();
+            return 0;
+
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+            cout << "输入错误，请输入菜单中的数字！" << endl;
+            continue;
+        }
 
         if (choice == 1)
         {
@@ -405,7 +428,7 @@ int main()
         {
             if (saveToFile())
             {
-                claerTasks();
+                clearTasks();
                 break;
             }
 
