@@ -30,12 +30,29 @@ Node *head = nullptr; // 链表头指针为空
 // 添加任务函数
 void addTask()
 {
-    Node *newNode = new Node; // 申请一个新的节点以存储数据
+    int maxId = 0;
+    Node *current = head;
+    while (current != nullptr)
+    {
+        if (current->data.id > maxId)
+        {
+            maxId = current->data.id;
+        }
 
-    cout << "请输入任务编号：" << endl;
-    cin >> newNode->data.id;
+        current = current->next;
+    }
 
-    cin.ignore();
+    if (maxId == numeric_limits<int>::max())
+    {
+        cout << "任务编号已达到最大，无法继续添加！" << endl;
+        return;
+    }
+
+    Node *newNode = new Node;
+    newNode->data.id = maxId + 1;
+    cout << "新任务编号为：" << newNode->data.id << endl;
+
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     cout << "请输入课程名称：" << endl;
     getline(cin, newNode->data.course);
@@ -379,22 +396,22 @@ int main()
         cout << "0.退出" << endl;
 
         cout << "请选择：" << endl;
-        if (!cin >> choice)
+        if (!(cin >> choice))
         {
             if (cin.eof())
             {
                 cout << "输入正常，程序正在保存并退出！" << endl;
-            }
 
-            if (!saveToFile())
-            {
-                cout << "任务保存失败！" << endl;
+                if (!saveToFile())
+                {
+                    cout << "任务保存失败！" << endl;
+                    clearTasks();
+                    return 1;
+                }
+
                 clearTasks();
-                return 1;
+                return 0;
             }
-
-            clearTasks();
-            return 0;
 
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
