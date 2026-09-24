@@ -122,9 +122,30 @@ void showTask()
 void modifyTask()
 {
     int Id;
-    cout << "请输入要修改的任务编号：" << endl;
-    cin >> Id;
-    cin.ignore();
+    while (true)
+    {
+        cout << "请输入要修改的任务编号" << endl;
+
+        cin >> Id;
+
+        if (cin)
+        {
+            break;
+        }
+
+        if (cin.eof())
+        {
+            return;
+        }
+
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 清除错误输入行，以便重新读取
+
+        cout << "输入错误，请输入整数编号！" << endl;
+    }
+
+    // 清除读取成功后的换行，为getline做准备
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     Node *p = head;
 
@@ -134,40 +155,59 @@ void modifyTask()
         {
             cout << "已找到要修改的任务" << endl;
 
+            Task updated = p->data;
+
             cout << "请输入新课程名称：" << endl;
-            getline(cin, p->data.course);
+            getline(cin, updated.course);
 
             cout << "请输入新学习内容：" << endl;
-            getline(cin, p->data.content);
+            getline(cin, updated.content);
 
             cout << "请输入新学习目标：" << endl;
-            getline(cin, p->data.goal);
+            getline(cin, updated.goal);
 
             cout << "请输入新任务安排：" << endl;
-            getline(cin, p->data.plan);
+            getline(cin, updated.plan);
 
             int status;
             while (true)
             {
                 cout << "请输入任务完成状态（0-未完成，1-已完成）：" << endl;
                 cin >> status;
+
+                if (!cin)
+                {
+                    if (cin.eof())
+                    {
+                        return;
+                    }
+
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "输入错误，请输入整数0或1！" << endl;
+                    continue;
+                }
+
                 if (status == 0)
                 {
-                    p->data.completed = false;
+                    updated.completed = false;
                     break;
                 }
                 else if (status == 1)
                 {
-                    p->data.completed = true;
+                    updated.completed = true;
                     break;
                 }
                 else
                 {
-                    cout << "输入错误，请重新输入！" << endl;
+                    cout << "只能输入0或1，请重新输入！" << endl;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 }
             }
 
+            p->data = updated;
             cout << "任务修改成功！" << endl;
+
             return;
         }
         p = p->next;
@@ -186,8 +226,27 @@ void deleteTask()
 
     int id;
 
-    cout << "请输入要删除的任务编号：" << endl;
-    cin >> id;
+    while (true)
+    {
+        cout << "请输入要删除的任务编号：" << endl;
+
+        cin >> id;
+
+        if (cin)
+        {
+            break;
+        }
+
+        if (cin.eof())
+        {
+            return;
+        }
+
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "输入错误，请输入整数编号！" << endl;
+    }
 
     Node *p = head;
     Node *prev = nullptr;
@@ -225,9 +284,29 @@ void deleteTask()
 // 任务完成函数
 void completeTask()
 {
-    cout << "请输入完成状态改变的任务编号：" << endl;
     int id;
-    cin >> id;
+
+    while (true)
+    {
+        cout << "请输入完成状态改变的任务编号：" << endl;
+
+        cin >> id;
+
+        if (cin)
+        {
+            break;
+        }
+
+        if (cin.eof())
+        {
+            return;
+        }
+
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        cout << "输入错误，请输入整数编号！" << endl;
+    }
 
     Node *p = head;
 
@@ -450,6 +529,10 @@ int main()
             }
 
             cout << "任务尚未保存，请处理问题后重试！" << endl;
+        }
+        else
+        {
+            cout << "输入错误，只能输入整数0-5，请重新输入！" << endl;
         }
     }
 
